@@ -47,6 +47,7 @@ SOFTWARE.
     minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight
     maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight
     openMenuEvents: 'cxttapstart taphold', // cytoscape events that will open the menu (space separated)
+    activateEvents: 'click', //DOM events that will activate commands
     itemColor: 'white', // the colour of text in the command's content
     itemTextShadowColor: 'black', // the text shadow colour of the command's content
     zIndex: 9999 // the z-index of the ui div
@@ -116,14 +117,16 @@ SOFTWARE.
       var theta1 = Math.PI / 2;
       var theta2 = theta1 + dtheta;
 
-      for (var i = 0; i < commands.length; i++) {
-        var command = commands[i];
+      //NOTE:let is used here so that the event listener added to each cxtmenu-item is not the last one
+      //REFERENCE LINK: http://stackoverflow.com/questions/18880895/why-when-i-add-a-bunch-of-event-listeners-in-a-loop-does-every-element-trigger
+      for (let i = 0; i < commands.length; i++) {
+        let command = commands[i];
 
-        var midtheta = (theta1 + theta2) / 2;
-        var rx1 = 0.66 * r * Math.cos(midtheta);
-        var ry1 = 0.66 * r * Math.sin(midtheta);
+        let midtheta = (theta1 + theta2) / 2;
+        let rx1 = 0.66 * r * Math.cos(midtheta);
+        let ry1 = 0.66 * r * Math.sin(midtheta);
 
-        var $item = $('<div class="cxtmenu-item"></div>');
+        let $item = $('<div class="cxtmenu-item"></div>');
         $item.css({
           color: options.itemColor,
           cursor: 'default',
@@ -141,7 +144,7 @@ SOFTWARE.
           marginTop: -ry1 - r * 0.33
         });
 
-        var $content = $('<div class="cxtmenu-content">' + command.content + '</div>');
+        let $content = $('<div class="cxtmenu-content">' + command.content + '</div>');
         $content.css({
           'width': r * 0.66,
           'height': r * 0.66,
@@ -155,6 +158,7 @@ SOFTWARE.
 
         $parent.append($item);
         $item.append($content);
+        $($item).on(options.activateEvents, command.select);
 
 
         theta1 += dtheta;
